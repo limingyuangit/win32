@@ -1,0 +1,25 @@
+name: Build Win32 D3D App
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest  # 使用 Windows Server 2022 虚拟环境
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Compile
+      shell: cmd
+      run: |
+        cl /EHsc /O2 /Fe:MyApp.exe main.cpp ^
+           /link user32.lib d3d11.lib dxgi.lib d2d1.lib dwrite.lib
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: myapp-exe
+        path: MyApp.exe
