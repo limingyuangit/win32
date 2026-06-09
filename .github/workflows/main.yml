@@ -1,15 +1,30 @@
-name: Build Win32 D3D App
-on: push
+name: Build Win32 FilterList
+
+on:
+  push:
+    paths:
+      - 'main.cpp'          # 仅当 main.cpp 变化时触发
+  workflow_dispatch:        # 允许手动触发
+
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: microsoft/setup-msbuild@v2
-    - name: Compile
-      shell: cmd
-      run: cl /EHsc /O2 /Fe:MyApp.exe main.cpp /link user32.lib d3d11.lib dxgi.lib d2d1.lib dwrite.lib
-    - uses: actions/upload-artifact@v4
-      with:
-        name: myapp-exe
-        path: MyApp.exe
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Visual Studio environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64          # 编译为 64 位可执行文件（如需32位改为 x86）
+
+      - name: Compile main.cpp
+        run: |
+          cl /EHsc /Fe:FilterList.exe main.cpp /link comctl32.lib user32.lib kernel32.lib
+
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FilterList-win64
+          path: FilterList.exe
