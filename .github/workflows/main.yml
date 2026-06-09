@@ -12,14 +12,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    # 这一步是核心：将 MSBuild 和 cl.exe 加入 PATH
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
     - name: Compile
       shell: cmd
       run: |
-        cl /EHsc /O2 /Fe:MyApp.exe main.cpp ^
-           /link user32.lib d3d11.lib dxgi.lib d2d1.lib dwrite.lib
+        cl /EHsc /O2 /Fe:MyApp.exe main.cpp /link user32.lib d3d11.lib dxgi.lib d2d1.lib dwrite.lib
+      # 注意：这里我把 ^ 换行符去掉写在一行，避免换行问题。
+      # 也可以使用 ^ 续行，但要确保 ^ 后面直接换行，且下一行开头无空格。
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
